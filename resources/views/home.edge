@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AdonisJS - A fully featured web framework for Node.js</title>
-  @entryPointStyles('app')
-  @entryPointScripts('app')
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>AdonisJS - A fully featured web framework for Node.js</title>
+	@entryPointStyles('app')
+	@entryPointScripts('app')
 </head>
+
 <body>
 
 
@@ -18,14 +20,35 @@
 		</hgroup>
 
 		<hgroup>
-			<label for="language">Language</label>
-			<select id="language" required>
-				<option value="" selected>Select a language..</option>
-				<option>…</option>
-			</select>
+			<form action="/create" method="post">
+				<label for="topic">Topic</label>
+				<input type="text" name="topic" id="topic" required>
+				<label for="language">Language</label>
+				<select id="language" name="language" required>
+					<option value="" selected>Select a language..</option>
+					@each (language in languages)
+						<option value="{{language.code}}">{{language.language}}</option>
+					@end
+				</select>
+				<button type="submit">Create playlist</button>
+			</form>
 		</hgroup>
 
+		<br>
+
+		@if(flashMessages.get('videos'))
+			<hgroup>
+				<h1>Your playlist:</h1>
+				<ul>
+					@each (video in flashMessages.get('videos'))
+						<a href={{ video.url }} target="_blank"><li>{{ video.title }}</li></a>
+					@end
+				</ul>
+			</hgroup>
+		@end
+
 	</header>
-  
+
 </body>
+
 </html>
