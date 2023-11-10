@@ -67,6 +67,7 @@
     "@adonisjs/view": "^6.2.0",
     "@picocss/pico": "^1.5.10",
     "@yimura/scraper": "^1.2.4",
+    "bing-translate-api": "^2.9.2",
     "proxy-addr": "^2.0.7",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.21"

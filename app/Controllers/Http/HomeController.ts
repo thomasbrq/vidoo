@@ -3,13 +3,50 @@
 import { HttpContext } from "@adonisjs/core/build/standalone"
 import { SessionContract } from "@ioc:Adonis/Addons/Session";
 import youtube from '@yimura/scraper'
+const { translate } = require('bing-translate-api');
+
+interface IVideo {
+	title: string,
+	url: URL
+}
 
 const state = {
 	languages: [
-		{ language: "English", code: "en-EN" },
-		{ language: "French", code: "fr-FR" },
-		{ language: "Español", code: "es-ES" },
+		{ language: "English", code: "en-EN", short: "en" },
+		{ language: "French", code: "fr-FR", short: "fr" },
+		{ language: "Español", code: "es-ES", short: "es" },
 	]
+}
+
+async function translate_topic(topic: string, language: string): Promise<string | null> {
+	const lang = state.languages.find((e: any) => e.code === language );
+
+	if (!lang) {
+		return null;
+	}
+
+	const t = await translate(topic, null, lang.short)
+
+	return t.translation;
+}
+
+async function create_playlist(translated_topic: string, language: string): Promise<IVideo | null> {
+	const yt = new youtube.default(language);
+
+	const results = await yt.search(translated_topic, {
+		language: language,
+		searchType: 'video'
+	});
+
+	if (results.videos.length <= 0) {
+		return null;
+	}
+
+	const data = results.videos.map((e: any) => {
+		return { title: e.title, url: e.link  };
+	} )
+
+	return data;
 }
 
 export default class HomeController {
@@ -27,21 +64,15 @@ export default class HomeController {
 			return response.redirect().back()
 		}
 
-		const yt = new youtube.default(language);
-
-		// Sets the language communicated to YouTube to Dutch from Belgium for this search
-		const results = await yt.search(topic, {
-			language: language,
-			searchType: 'video' // video is the default search type
-		});
-
-		if (results.videos.length <= 0) {
+		const translated_topic = await translate_topic(topic, language)
+		if (!translated_topic) {
 			return response.redirect().back()
 		}
 
-		const data = results.videos.map((e: any) => {
-			return { title: e.title, url: e.link  };
-		} )
+		const data = await create_playlist(translated_topic, language);
+		if (!data) {
+			return response.redirect().back()
+		}
 
 		session.flash('videos', data)
 		return response.redirect().back()
