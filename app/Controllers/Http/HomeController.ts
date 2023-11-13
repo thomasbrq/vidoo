@@ -10,6 +10,7 @@ interface IVideo {
 	url: URL
 }
 
+// https://gist.github.com/Josantonius/b455e315bc7f790d14b136d61d9ae469
 const state = {
 	languages: [
 		{ language: "English", code: "en-EN", short: "en" },
