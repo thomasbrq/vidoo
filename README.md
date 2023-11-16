@@ -32,6 +32,7 @@ This project allows you to easily create Youtube playlists on a specific subject
 - AdonisJS
 - bing-translate-api
 - @yimura/scraper
+- PicoCSS
 
 ## Getting Started
 
